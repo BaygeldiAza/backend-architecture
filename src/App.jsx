@@ -1,37 +1,34 @@
 import { useState } from "react";
-import logo from './assets/react.svg';
+import logo from "./assets/react.svg";
+import "./App.css"; // Import our custom CSS
 
 export default function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to purple-50 flex items-center justify-center p-8">
-      <div className="text-center">
-        <img 
-            src={logo}
-            alt="React logo"
-            className="w-32 h-32 mx-auto mb-8 anime-spin"
-            style={{ animationDuration: '5s'}}            
+    <div className="container">
+      <div className="content">
+        <img
+          src={logo}
+          alt="React logo"
+          className="logo"
         />
 
-        <h1 className="text-6xl font-bold text-gray-800 mb-4">
-          {count}
-        </h1>
+        <h1 className="count">{count}</h1>
+        <p className="label">clicks</p>
 
-        <p className="text-xl text-gray-600 mb-8">clicks</p>
-
-        <div className="space-x-4">
-          <button 
-            onClick={() => setCount(count+2)}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition"
-            >
-              RESET
+        <div className="buttons">
+          <button onClick={() => setCount(count + 1)} className="btn add">
+            +1 count
           </button>
-
+          <button onClick={() => setCount(0)} className="btn reset">
+            RESET
+          </button>
+          <button onClick={() => setCount(count - 1)} className="btn sub">
+            -1 count 
+          </button>
         </div>
-
       </div>
-
     </div>
   );
 }
