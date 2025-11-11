@@ -1,18 +1,37 @@
 import { useState } from "react";
-import logo from './assets/logo.svg';
+import logo from './assets/react.svg';
 
 export default function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <img
-        src={logo}
-        alt="React logo"
-        style={{ width: "100px", height: "100px", animation: "spin 5s linear infinite" }}
-      />
-      <h1>You clicked {count} times</h1>
-      <button onClick={() => setCount(count + 1)}>Click Me</button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to purple-50 flex items-center justify-center p-8">
+      <div className="text-center">
+        <img 
+            src={logo}
+            alt="React logo"
+            className="w-32 h-32 mx-auto mb-8 anime-spin"
+            style={{ animationDuration: '5s'}}            
+        />
+
+        <h1 className="text-6xl font-bold text-gray-800 mb-4">
+          {count}
+        </h1>
+
+        <p className="text-xl text-gray-600 mb-8">clicks</p>
+
+        <div className="space-x-4">
+          <button 
+            onClick={() => setCount(count+2)}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition"
+            >
+              RESET
+          </button>
+
+        </div>
+
+      </div>
+
     </div>
   );
 }
