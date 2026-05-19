@@ -14,11 +14,11 @@ class Post(BaseModel):
 async def root():
     return {"Welcome": "TO My API"}
 
-@app.get("/items/{item_id}")
-async def read_items(item_id: int, q: str | None=None):
-    return {"item_id": item_id, "q": q}
+@app.get("/posts")
+def get_posts():
+    return {"data": "This is your posts"}
 
-@app.post("/createposts")
+@app.post("/posts")
 def create_post(new_post: Post):
     print(new_post.title)
     return{"data": "new post", }
