@@ -33,13 +33,6 @@ async def root():
 def get_posts():
     return {"data": my_posts}
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_post(new_post: Post):
-    new_post_dict = new_post.dict()
-    new_post_dict['id'] = randrange(0,1000000)
-    my_posts.append(new_post_dict)
-    return{"data": new_post_dict}
-
 @app.get("/posts/{id}")
 def get_post(id:int):
     post = find_post(id)
@@ -47,6 +40,24 @@ def get_post(id:int):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail={'message': f"post with {id} not found"})
     return{"post detail": post}
+
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
+def create_post(new_post: Post):
+    new_post_dict = new_post.dict()
+    new_post_dict['id'] = randrange(0,1000000)
+    my_posts.append(new_post_dict)
+    return{"data": new_post_dict}
+
+@app.put("/posts/{id}")
+def update_post(id:int, post: Post):
+    index = find_index(id)
+    if index is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail={"message": f"post {id} is not found"})
+    post_dict=post.dict()
+    post_dict['id'] = id
+    my_posts[index] = post_dict
+    return {'data': my_posts}
 
 @app.delete("/posts", status_code=status.HTTP_204_NO_CONTENT)
 def  delete_all():
@@ -66,15 +77,6 @@ def delete_post(id: int):
     my_posts.pop(index)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@app.put("/posts/{id}")
-def update_post(id:int, post: Post):
-    index = find_index(id)
-    if index is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail={"message": f"post {id} is not found"})
-    post_dict=post.dict()
-    post_dict['id'] = id
-    my_posts[index] = post_dict
-    return {'data': my_posts}
+
     
 
