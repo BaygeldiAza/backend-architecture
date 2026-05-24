@@ -7,7 +7,7 @@ import time
 while True:
     try:
         conn = psycopg2.connect(host = 'localhost', database='backend-architecture', user='postgres',
-                            password = '----------', cursor_factory=RealDictCursor)
+                            password = '--------', cursor_factory=RealDictCursor)
         cursor = conn.cursor()
         print("Database connection was successfull!")
         break
@@ -39,6 +39,9 @@ def get_posts():
 def get_post(id:int):
     cursor.execute("""SELECT * FROM posts WHERE id = %s """, (str(id)))
     post = cursor.fetchone()
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Post with id: {id} is not found")
     return{"post detail": post }
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
@@ -51,19 +54,18 @@ def create_post(post: Post):
 
 @app.put("/posts/{id}")
 def update_post(id:int, post: Post):
-    
-    return {'data'}
+    cursor.execute("""UPDATE posts SET title = %s, content = %s, is_published = %s RETURNING *""",
+                   (post.title, post.content, post.published))
+    updated_post = cursor.fetchone()
+    conn.commit()
+    if not updated_post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"post with id {id} is not found")
+    return {'data': updated_post}
 
 @app.delete("/posts", status_code=status.HTTP_204_NO_CONTENT)
 def  delete_all():
+    cursor.execute("""DELETE FROM posts WHERE id = %s RETURNING *""", (str(id)))
+    delete_post = cursor.fetchone()
+    conn.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
-@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int):
-    
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
-    
-
