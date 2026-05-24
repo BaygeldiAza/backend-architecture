@@ -3,7 +3,22 @@ from fastapi.params import Body
 from pydantic import BaseModel
 from typing import Optional
 from random import randrange
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
+
+try:
+
+    conn = psycopg2.connect(host = 'localhost', database='backend-architecture', user='postgres',
+                            password = '----------', cursor_factory=RealDictCursor)
+    cur = conn.cursor()
+    print("Database connection was successfull!")
+except Exception as error:
+    print("Connecting to database failed")
+    print("Error:", error)
+
+#cur.execute("INSERT INTO postgres (title, content) VALUES("GOOD America", "Great Turkmenistan);")
+#cur.execute
 
 app = FastAPI()
 
