@@ -22,8 +22,6 @@ from .schemas.schemas import PostCreate
 
 models.Base.metadata.create_all(bind=engine)
 
-
-
 app = FastAPI()
 
 @app.get("/")
@@ -54,23 +52,28 @@ def create_post(post: PostCreate, db: Session = Depends(get_db)):
     #               (post.title, post.content, post.published))
     #new_post = cursor.fetchone()
     #conn.commit()
-    new_post = models.Post(title = post.title, content = post.content, published = post.published)
+
+    # new_post = models.Post(title = post.title, content = post.content, published = post.published)
+    new_post = models.Post(**post.dict())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
     return{"data": new_post}
 
-# @app.put("/posts/{id}")
-# def update_post(id:int, post: Post, db: Session = Depends(get_db)):
+@app.put("/posts/{id}")
+def update_post(id:int, posts: PostCreate, db: Session = Depends(get_db)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, is_published = %s WHERE id = %s RETURNING *""",
     #                (post.title, post.content, post.published, str(id)))
     # updated_post = cursor.fetchone()
     # conn.commit()
-    # if not updated_post:
-    # db.query(models.Post)
-    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-    #                         detail=f"post with id {id} is not found")
-    # return {'data': updated_post}
+    post_query = db.query(models.Post).filter(models.Post.id == id)
+    post = post_query.first()
+
+    if post == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id {id} is not found")
+    
+    post_query.update(posts.dict(), synchronize_session=False)
+    return {'data': post_query.first()}
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def  delete_post(id: int, db: Session = Depends(get_db)):
