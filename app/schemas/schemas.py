@@ -16,3 +16,17 @@ class Post(PostBase):
 
     class Config:
         from_attributes = True
+
+class UserBase(BaseModel):  
+    email: str
+    password: str
+
+class CreateUser(UserBase):
+    pass
+
+class User(UserBase):
+    id: int
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
