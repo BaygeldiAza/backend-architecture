@@ -92,3 +92,9 @@ def  delete_post(id: int, db: Session = Depends(get_db)):
     db.commit()
     
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.get("/users")
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(models.User).all()
+    return users
