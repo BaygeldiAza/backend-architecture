@@ -6,7 +6,7 @@ from psycopg2.extras import RealDictCursor
 import time 
 from .database.db import engine, get_db
 from .models import models
-from .schemas.schemas import PostCreate, Post, User, CreateUser
+from .schemas.schemas import PostCreate, Post, UserBase, UserOut, Users
 
 #while True:
 #    try:
@@ -93,13 +93,13 @@ def  delete_post(id: int, db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@app.get("/users", response_model=List[User])
+@app.get("/users", response_model=List[Users])
 def get_users(db: Session = Depends(get_db)):
     users = db.query(models.User).all()
     return users
 
-@app.post("/users", status_code=status.HTTP_201_CREATED)
-def create_user(user: CreateUser ,db: Session = Depends(get_db)):
+@app.post("/users", status_code=status.HTTP_201_CREATED, response_model=UserOut)
+def create_user(user: UserBase ,db: Session = Depends(get_db)):
     new_user = models.User(**user.dict())
     db.add(new_user)
     db.commit()

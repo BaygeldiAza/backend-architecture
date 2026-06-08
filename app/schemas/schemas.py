@@ -21,12 +21,16 @@ class UserBase(BaseModel):
     email: EmailStr
     password: str
 
-class CreateUser(UserBase):
-    pass
-
-class User(UserBase):
+class Users(UserBase):
     id: int
-    created_at: datetime
-    
+    created_at: datetime 
+
+    class Config:
+        from_attributes = True
+
+class UserOut(BaseModel):
+    id: int
+    email: EmailStr
+
     class Config:
         from_attributes = True
