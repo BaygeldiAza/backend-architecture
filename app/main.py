@@ -7,6 +7,7 @@ import time
 from .database.db import engine, get_db
 from .models import models
 from .schemas.schemas import PostCreate, Post, UserBase, UserOut, Users
+from .utils.utils import hash
 
 #while True:
 #    try:
@@ -100,6 +101,8 @@ def get_users(db: Session = Depends(get_db)):
 
 @app.post("/users", status_code=status.HTTP_201_CREATED, response_model=UserOut)
 def create_user(user: UserBase ,db: Session = Depends(get_db)):
+    hashed_password = hash(user.password)
+    user.password = hashed_password
     new_user = models.User(**user.dict())
     db.add(new_user)
     db.commit()
