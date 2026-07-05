@@ -6,9 +6,12 @@ from ..database.db import get_db
 from ..models import models
 from ..schemas.schemas import Post, PostCreate
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/posts",
+    tags=["Posts"]
+)
 
-@router.get("/posts", response_model=List[Post])
+@router.get("/", response_model=List[Post])
 def get_posts(db: Session = Depends(get_db)):
     posts = db.query(models.Post).all()
     
@@ -18,7 +21,7 @@ def get_posts(db: Session = Depends(get_db)):
     return posts 
     
 
-@router.get("/posts/{id}",response_model=Post)
+@router.get("/{id}",response_model=Post)
 def get_post(id:int, db: Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == id).first()
     if not post:
@@ -26,7 +29,7 @@ def get_post(id:int, db: Session = Depends(get_db)):
                             detail=f"Post with id: {id} is not found")
     return post 
 
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=Post)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=Post)
 def create_post(post: PostCreate, db: Session = Depends(get_db)):
     #cursor.execute("""INSERT INTO posts(title, content, is_published) VALUES (%s, %s, %s) RETURNING *""",
     #               (post.title, post.content, post.published))
@@ -40,7 +43,7 @@ def create_post(post: PostCreate, db: Session = Depends(get_db)):
     db.refresh(new_post)
     return new_post
 
-@router.put("/posts/{id}",response_model=Post)
+@router.put("/{id}",response_model=Post)
 def update_post(id:int, posts: PostCreate, db: Session = Depends(get_db)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, is_published = %s WHERE id = %s RETURNING *""",
     #                (post.title, post.content, post.published, str(id)))
@@ -56,7 +59,7 @@ def update_post(id:int, posts: PostCreate, db: Session = Depends(get_db)):
     db.commit()
     return post_query.first()
 
-@router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def  delete_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute("""DELETE FROM posts WHERE id = %s RETURNING *""", (str(id)))
     # delete_post = cursor.fetchone()

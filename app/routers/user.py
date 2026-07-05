@@ -7,14 +7,17 @@ from ..models import models
 from ..schemas.schemas import UserBase, UserOut
 from ..utils.utils import hash
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/users",
+    tags=["Users"]
+)
 
-@router.get("/users", response_model=List[UserOut])
+@router.get("/", response_model=List[UserOut])
 def get_users(db: Session = Depends(get_db)):
     users = db.query(models.User).all()
     return users
 
-@router.post("/users", status_code=status.HTTP_201_CREATED, response_model=UserOut)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserOut)
 def create_user(user: UserBase ,db: Session = Depends(get_db)):
     hashed_password = hash(user.password)
     user.password = hashed_password
@@ -24,14 +27,14 @@ def create_user(user: UserBase ,db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-@router.get("/users/{id}",response_model=UserOut)
+@router.get("/{id}",response_model=UserOut)
 def get_user(id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"user with id: {id} does not exists!")
     return user
 
-@router.put("/users/{id}")
+@router.put("/{id}")
 def update_user(id: int, user: UserBase, db: Session = Depends(get_db)):
     user_query = db.query(models.User).filter(models.User.id == id)
     users = user_query.first()
@@ -43,7 +46,7 @@ def update_user(id: int, user: UserBase, db: Session = Depends(get_db)):
     db.commit()
     return user_query.first()
     
-@router.delete("/users/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(id: int, db: Session=Depends(get_db)):
     deleted_user = db.query(models.User).filter(models.User.id == id).first() 
     if delete_user is None:
