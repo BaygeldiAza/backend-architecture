@@ -5,6 +5,7 @@ from psycopg2.extras import RealDictCursor
 import time 
 from .database.db import engine
 from .models import models
+from .routers import post, user
 
 #while True:
 #    try:
@@ -25,3 +26,6 @@ app = FastAPI()
 @app.get("/")
 async def root():
     return {"Welcome": "to My API"}
+
+app.include_router(post.router)
+app.include_router(user.router)
