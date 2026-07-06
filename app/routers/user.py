@@ -37,12 +37,16 @@ def get_user(id: int, db: Session = Depends(get_db)):
 @router.put("/{id}")
 def update_user(id: int, user: UserBase, db: Session = Depends(get_db)):
     user_query = db.query(models.User).filter(models.User.id == id)
-    users = user_query.first()
+    existing_users = user_query.first()
 
-    if not users:
+    if not existing_users:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with id: {id} does not exists!")
-    
-    user_query.update(user.dict(),synchronize_session=False)
+    user_data = user.dict()
+
+    if "password" in user_data:
+        user_data["password"] = hash(user_data["password"])
+
+    user_query.update(user_data,synchronize_session=False)
     db.commit()
     return user_query.first()
     
