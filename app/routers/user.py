@@ -6,6 +6,7 @@ from ..database.db import get_db
 from ..models import models
 from ..schemas.schemas import UserBase, UserOut
 from ..utils.utils import hash
+from ..auth import oauth2
 
 router = APIRouter(
     prefix="/users",
@@ -18,7 +19,10 @@ def get_users(db: Session = Depends(get_db)):
     return users
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=UserOut)
-def create_user(user: UserBase ,db: Session = Depends(get_db)):
+def create_user(user: UserBase ,db: Session = Depends(get_db),
+                user_id: int = Depends(oauth2.get_current_user)):
+    print(user_id)
+
     hashed_password = hash(user.password)
     user.password = hashed_password
     new_user = models.User(**user.dict())

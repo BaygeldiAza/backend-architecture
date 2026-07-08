@@ -5,6 +5,7 @@ from typing import List
 from ..database.db import get_db
 from ..models import models
 from ..schemas.schemas import Post, PostCreate
+from ..auth import oauth2
 
 router = APIRouter(
     prefix="/posts",
@@ -30,13 +31,15 @@ def get_post(id:int, db: Session = Depends(get_db)):
     return post 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=Post)
-def create_post(post: PostCreate, db: Session = Depends(get_db)):
+def create_post(post: PostCreate, db: Session = Depends(get_db),
+                user_id: int = Depends(oauth2.get_current_user)):
     #cursor.execute("""INSERT INTO posts(title, content, is_published) VALUES (%s, %s, %s) RETURNING *""",
     #               (post.title, post.content, post.published))
     #new_post = cursor.fetchone()
     #conn.commit()
 
     # new_post = models.Post(title = post.title, content = post.content, published = post.published)
+    print(user_id)
     new_post = models.Post(**post.dict())
     db.add(new_post)
     db.commit()
