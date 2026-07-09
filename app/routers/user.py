@@ -39,7 +39,8 @@ def get_user(id: int, db: Session = Depends(get_db)):
     return user
 
 @router.put("/{id}")
-def update_user(id: int, user: UserBase, db: Session = Depends(get_db)):
+def update_user(id: int, user: UserBase, db: Session = Depends(get_db),
+                current_user: int = Depends(oauth2.get_current_user)):
     user_query = db.query(models.User).filter(models.User.id == id)
     existing_users = user_query.first()
 
@@ -55,7 +56,8 @@ def update_user(id: int, user: UserBase, db: Session = Depends(get_db)):
     return user_query.first()
     
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(id: int, db: Session=Depends(get_db)):
+def delete_user(id: int, db: Session=Depends(get_db),
+                current_user: int = Depends(oauth2.get_current_user)):
     deleted_user = db.query(models.User).filter(models.User.id == id).first() 
     if delete_user is None:
         raise HTTPException(
