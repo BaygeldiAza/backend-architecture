@@ -18,7 +18,6 @@ def get_posts(db: Session = Depends(get_db)):
     
     # cursor.execute("""SELECT * FROM posts""")
     # posts = cursor.fetchall()
-
     return posts 
     
 
@@ -39,8 +38,7 @@ def create_post(post: PostCreate, db: Session = Depends(get_db),
     #conn.commit()
 
     # new_post = models.Post(title = post.title, content = post.content, published = post.published)
-    print(current_user)
-    new_post = models.Post(**post.dict())
+    new_post = models.Post(owner_id = current_user.id, **post.dict())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -53,12 +51,13 @@ def update_post(id:int, posts: PostCreate, db: Session = Depends(get_db),
     #                (post.title, post.content, post.published, str(id)))
     # updated_post = cursor.fetchone()
     # conn.commit()
-    post_query = db.query(models.Post).filter(models.Post.id == id)
+    post_query = db.query(models.Post).filter(models.Post.id == id,
+                                            models.Post.owner_id == current_user.id)
     post = post_query.first()
 
     if post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id {id} is not found")
-    
+
     post_query.update(posts.dict(), synchronize_session=False)
     db.commit()
     return post_query.first()
@@ -69,7 +68,7 @@ def  delete_post(id: int, db: Session = Depends(get_db),
     # cursor.execute("""DELETE FROM posts WHERE id = %s RETURNING *""", (str(id)))
     # delete_post = cursor.fetchone()
     # conn.commit()
-    deleted_post = db.query(models.Post).filter(models.Post.id == id).first()
+    deleted_post = db.query(models.Post).filter(models.Post.id == id, models.Post.owner_id == current_user.id).first()
     if deleted_post is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
