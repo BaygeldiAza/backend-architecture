@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine 
 from sqlalchemy.orm import sessionmaker, declarative_base
-#from app.core.config import settings
+from ..core.config import settings
 
-SQL_ALCHEMY_URL = "postgresql://postgres:password@localhost:5432/backend-architecture"
+SQL_ALCHEMY_URL = f"postgresql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}"
 
 engine = create_engine(SQL_ALCHEMY_URL)
 
