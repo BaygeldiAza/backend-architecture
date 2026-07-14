@@ -1,12 +1,12 @@
 from fastapi import FastAPI
-
+from functools import lru_cache
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time 
 from .database.db import engine
 from .models import models
 from .routers import post, user, auth
-
+from .core.config import settings
 #while True:
 #    try:
 #        conn = psycopg2.connect(host = 'localhost', database='backend-architecture', user='postgres',
@@ -22,6 +22,9 @@ from .routers import post, user, auth
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+@lru_cache
+def get_settings():
+    return settings
 
 @app.get("/")
 async def root():
