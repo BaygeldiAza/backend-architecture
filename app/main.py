@@ -5,7 +5,7 @@ from psycopg2.extras import RealDictCursor
 import time 
 from .database.db import engine
 from .models import models
-from .routers import post, user, auth
+from .routers import post, user, auth, vote
 from .core.config import settings
 #while True:
 #    try:
@@ -33,3 +33,4 @@ async def root():
 app.include_router(post.router)
 app.include_router(user.router)
 app.include_router(auth.router)
+app.include_router(vote.router)
