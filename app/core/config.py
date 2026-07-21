@@ -1,4 +1,9 @@
+from dotenv import load_dotenv
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BASE_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(BASE_DIR / ".env")
 
 class Settings(BaseSettings):
     DATABASE_HOSTNAME: str
@@ -10,6 +15,6 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
-    model_config =SettingsConfigDict(env_file=".env")
+    model_config =SettingsConfigDict(env_file=".env", extra="ignore")
 
 settings = Settings()
