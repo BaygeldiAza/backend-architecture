@@ -7,6 +7,7 @@ from .database.db import engine
 from .models import models
 from .routers import post, user, auth, vote
 from .core.config import settings
+from fastapi.middleware.cors import CORSMiddleware
 #while True:
 #    try:
 #        conn = psycopg2.connect(host = 'localhost', database='backend-architecture', user='postgres',
@@ -19,12 +20,24 @@ from .core.config import settings
 #        print("Error:", error)
 #      time.sleep(2)
 
-models.Base.metadata.create_all(bind=engine)
+#models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @lru_cache
 def get_settings():
     return settings
+
 
 @app.get("/")
 async def root():
