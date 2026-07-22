@@ -3,6 +3,7 @@ services:
     name: fastapi-app
     runtime: python
     plan: free
+    ipAllowList: []
 
     buildCommand: |
       pip install -r requirements.txt

@@ -6,6 +6,7 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 load_dotenv(BASE_DIR / ".env")
 
 class Settings(BaseSettings):
+    DATABASE_URL: str
     DATABASE_HOSTNAME: str
     DATABASE_PORT: str
     DATABASE_USERNAME: str
