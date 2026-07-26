@@ -41,7 +41,7 @@ def get_settings():
 
 @app.get("/")
 async def root():
-    return {"Welcome": "to My API"}
+    return {"Welcome": "to Fast API "}
 
 app.include_router(post.router)
 app.include_router(user.router)
